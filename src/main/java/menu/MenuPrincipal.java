@@ -12,6 +12,7 @@ public class MenuPrincipal {
 
       String opcao = JOptionPane.showInputDialog("""
                 1 - Cadastrar Evento
+                2 - Pesquisar um Evento por Nome
                 0 - Sair
                 """);
 
@@ -24,6 +25,10 @@ public class MenuPrincipal {
 
         case "1":
           MenuEvento.cadastraEvento();
+          break;
+
+        case "2":
+          MenuEvento.pesquisaEventoPorNome();
           break;
 
         case "0":

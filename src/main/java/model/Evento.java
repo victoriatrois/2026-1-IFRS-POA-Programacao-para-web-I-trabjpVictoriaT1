@@ -1,6 +1,15 @@
 package model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToOne;
 
 import java.util.Date;
 
@@ -52,5 +61,34 @@ public class Evento {
         this.capacidadeMaxima = capacidadeMaxima;
         this.situacao = situacao;
         this.cronograma = cronograma;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public Date getDuracao() {
+        return duracao;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public int getCapacidadeMaxima() {
+        return capacidadeMaxima;
+    }
+
+    public StatusEvento getSituacao() {
+        return situacao;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("""
+            Evento:
+            ID: %d
+            Descricao: %s
+            """, id, descricao);
     }
 }

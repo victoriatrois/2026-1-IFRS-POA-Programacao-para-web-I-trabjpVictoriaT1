@@ -171,4 +171,63 @@ public class MenuEvento {
 
       return materiais;
     }
+
+  public static void pesquisaEventoPorNome() {
+    try {
+      String nome = JOptionPane.showInputDialog(
+          "Pesquise um evento pelo nome (ou parte do nome):");
+
+      if (nome == null || nome.trim().isEmpty()) {
+        return;
+      }
+
+      EventoDAO dao = new EventoDAO();
+
+      List<Evento> eventos = dao.buscaPorNome(nome.trim());
+
+      if (eventos.isEmpty()) {
+        JOptionPane.showMessageDialog(
+            null,
+            "Nenhum evento encontrado.");
+
+        return;
+      }
+
+      String resultado = """
+          Eventos encontrados:
+          
+          """;
+
+      for (Evento evento : eventos) {
+
+        resultado += String.format("""
+                ID: %d
+                Descrição: %s
+                Situação: %s
+                
+                --------------------
+                
+                """,
+            evento.getId(),
+            evento.getDescricao(),
+            evento.getSituacao());
+      }
+
+      JOptionPane.showMessageDialog(
+          null,
+          resultado
+      );
+    } catch (PersistenceException e) {
+      JOptionPane.showMessageDialog(
+          null,
+          "Erro ao consultar os eventos.");
+
+    } catch (Exception e) {
+
+      JOptionPane.showMessageDialog(
+          null,
+          "Ocorreu um erro inesperado.");
+
+    }
   }
+}
