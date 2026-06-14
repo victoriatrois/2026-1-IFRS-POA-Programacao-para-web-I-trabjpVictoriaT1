@@ -1,6 +1,7 @@
 package testes;
 
 import dao.EventoDAO;
+
 import model.Cronograma;
 import model.Atividade;
 import model.StatusAtividade;
@@ -39,16 +40,14 @@ public class TesteCadastrarEvento {
                         inicio,
                         fim,
                         StatusAtividade.PLANEJADA,
-                        "Coordenação do evento")
-        );
+                        "Coordenação do evento"));
 
         Evento evento = new Evento(
                 new Date(),
                 "JPA no IFRS",
                 250,
                 StatusEvento.PLANEJADO,
-                cronograma
-        );
+                cronograma);
 
         EventoDAO dao = new EventoDAO();
         dao.salva(evento);
