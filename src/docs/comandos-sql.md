@@ -6,6 +6,14 @@
 mysql -u root
 ```
 
+```sql
+SHOW DATABASES;
+
+USE trabjpa;
+
+SHOW TABLES;
+```
+
 ## Comandos utilizados durante a implementação do trabalho
 
 ### US1 - Cadastrar Evento
@@ -14,7 +22,7 @@ SELECT * FROM EVENTO;
 SELECT * FROM PALESTRA;
 SELECT * FROM OFICINA;
 SELECT * FROM PALESTRANTE;
-SELECT * FROM PALESTRA_PALESTRANTE;
+SELECT * FROM PALESTRANTE_DA_PALESTRA;
 ```
 
 ## US2 - Visualizar Evento Completo
@@ -24,7 +32,16 @@ SELECT * FROM PALESTRA_PALESTRANTE;
 
 ## US3 - Pesquisar Evento por Nome
 ```sql
+SELECT * FROM Evento WHERE LOWER(descricao) LIKE LOWER('aqua%'); -- pois tem no banco um evento cujo nome contém "Aquarela"
 
+SELECT
+  *
+FROM 
+  Evento
+    LEFT JOIN Oficina
+      ON Evento.id = Oficina.id
+    LEFT JOIN Palestra
+      ON Evento.id = Palestra.id;
 ```
 
 ## US4 - Listar Inscrições e Participantes
