@@ -23,14 +23,6 @@ public class DataUtil {
     return FORMATO_DATA.parse(texto);
   }
 
-  public static String formataData(Date data) {
-    if (data == null) {
-      return "";
-    }
-
-    return FORMATO_DATA.format(data);
-  }
-
   public static Date leDataHora(String mensagem)
       throws ParseException {
 
@@ -38,5 +30,13 @@ public class DataUtil {
         JOptionPane.showInputDialog(mensagem);
 
     return FORMATO_DATA_HORA.parse(texto);
+  }
+
+  public static String formataData(Date data) {
+    if (data == null) {
+      return "";
+    }
+
+    return FORMATO_DATA.format(data);
   }
 }

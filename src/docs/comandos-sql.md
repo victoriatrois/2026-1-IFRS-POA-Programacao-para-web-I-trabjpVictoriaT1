@@ -42,6 +42,26 @@ FROM
       ON Evento.id = Oficina.id
     LEFT JOIN Palestra
       ON Evento.id = Palestra.id;
+
+SELECT
+  *
+FROM
+  evento
+ORDER BY
+  evento.id;
+
+SELECT DISTINCT
+  evento.*
+FROM
+  Evento evento
+    LEFT JOIN Cronograma cronograma
+      ON evento.cronograma_id = cronograma.id
+    LEFT JOIN Cronograma_Atividade cronograma_atividade
+      ON cronograma.id = cronograma_atividade.Cronograma_id
+    LEFT JOIN Atividade atividade
+      ON cronograma_atividade.atividades_id = atividade.id
+WHERE
+  evento.id = 4;
 ```
 
 ## US4 - Listar Inscrições e Participantes

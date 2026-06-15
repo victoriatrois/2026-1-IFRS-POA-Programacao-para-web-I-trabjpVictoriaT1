@@ -35,4 +35,12 @@ public class Palestra extends Evento {
         this.palestrantes.add(palestrante);
         palestrante.getPalestras().add(this);
     }
+
+    public int getTempo() {
+        return tempo;
+    }
+
+    public Set<Palestrante> getPalestrantes() {
+        return palestrantes;
+    }
 }

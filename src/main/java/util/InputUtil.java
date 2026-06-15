@@ -27,6 +27,32 @@ public class InputUtil {
     return texto;
   }
 
+  public static Integer leInteiroObrigatorio(
+      String mensagem) {
+
+    while (true) {
+
+      try {
+
+        String texto =
+            leTextoObrigatorio(
+                mensagem);
+
+        if (texto == null) {
+          return null;
+        }
+
+        return Integer.parseInt(texto);
+
+      } catch (NumberFormatException e) {
+
+        JOptionPane.showMessageDialog(
+            null,
+            "Informe um número válido.");
+      }
+    }
+  }
+
   public static boolean confirma(
       String mensagem) {
 

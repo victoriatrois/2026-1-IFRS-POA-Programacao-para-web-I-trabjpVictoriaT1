@@ -36,4 +36,24 @@ public class Atividade {
         this.situacao = situacao;
         this.responsavel = responsavel;
     }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public Date getDataHoraInicio() {
+        return dataHoraInicio;
+    }
+
+    public Date getDataHoraFim() {
+        return dataHoraFim;
+    }
+
+    public String getResponsavel() {
+        return responsavel;
+    }
+
+    public StatusAtividade getSituacao() {
+        return situacao;
+    }
 }

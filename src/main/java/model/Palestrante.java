@@ -40,4 +40,12 @@ public class Palestrante {
     public void adicionaPalestra(Palestra palestra) {
         this.palestras.add(palestra);
     }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getEspecialidade() {
+        return especialidade;
+    }
 }
