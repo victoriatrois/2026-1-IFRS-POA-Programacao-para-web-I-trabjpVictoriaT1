@@ -19,4 +19,8 @@ public class Oficina extends Evento {
     super(duracao, descricao, capacidadeMaxima, situacao, cronograma);
     this.materiais = materiais;
   }
+
+  public List<String> getMateriais() {
+    return materiais;
+  }
 }

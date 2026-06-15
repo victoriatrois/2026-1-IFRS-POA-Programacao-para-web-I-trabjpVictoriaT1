@@ -1,5 +1,7 @@
 package menu;
 
+import util.InputUtil;
+
 import javax.swing.JOptionPane;
 
 public class MenuPrincipal {
@@ -10,9 +12,10 @@ public class MenuPrincipal {
 
     while (executando) {
 
-      String opcao = JOptionPane.showInputDialog("""
+      String opcao = InputUtil.leTextoObrigatorio("""
                 1 - Cadastrar Evento
-                2 - Pesquisar um Evento por Nome
+                2 - Listar o evento e todos os itens vinculados a ele
+                3 - Pesquisar um Evento por Nome
                 0 - Sair
                 """);
 
@@ -28,6 +31,10 @@ public class MenuPrincipal {
           break;
 
         case "2":
+          MenuEvento.exibeEventoCompleto();
+          break;
+
+        case "3":
           MenuEvento.pesquisaEventoPorNome();
           break;
 

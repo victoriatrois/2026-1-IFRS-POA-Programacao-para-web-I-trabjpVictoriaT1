@@ -4,16 +4,21 @@ import dao.EventoDAO;
 
 import jakarta.persistence.PersistenceException;
 
+import model.Atividade;
 import model.Cronograma;
 import model.Evento;
 import model.Oficina;
 import model.Palestra;
 import model.Palestrante;
+import model.StatusAtividade;
 import model.StatusEvento;
 
 import util.DataUtil;
+import util.InputUtil;
 
 import javax.swing.*;
+
+import java.awt.*;
 
 import java.text.ParseException;
 
@@ -22,212 +27,441 @@ import java.util.Date;
 import java.util.List;
 
 public class MenuEvento {
-  public static void cadastraEvento() {
+	private static final EventoDAO EVENTO_DAO =
+			new EventoDAO();
 
-    try {
-      String[] tiposDeEvento = {"Palestra", "Oficina"};
+	public static void cadastraEvento() {
+		try {
+			String[] tiposDeEvento = {"Palestra", "Oficina"};
 
-      int tipo = JOptionPane.showOptionDialog(
-          null,
-          "Selecione o tipo de evento que deseja cadastrar:",
-          "Cadastro de Evento",
-          JOptionPane.DEFAULT_OPTION,
-          JOptionPane.QUESTION_MESSAGE,
-          null,
-          tiposDeEvento,
-          tiposDeEvento[0]
-      );
+			int tipo = JOptionPane.showOptionDialog(
+					null,
+					"Selecione o tipo de evento que deseja cadastrar:",
+					"Cadastro de Evento",
+					JOptionPane.DEFAULT_OPTION,
+					JOptionPane.QUESTION_MESSAGE,
+					null,
+					tiposDeEvento,
+					tiposDeEvento[0]);
 
-      Date duracao = DataUtil.leData(
-          "Insira a data do evento (dd/MM/yyyy):");
+			Date duracao = DataUtil.leData(
+					"Insira a data do evento (dd/MM/yyyy):");
 
-      String descricao = JOptionPane.showInputDialog(
-          "Insira a Descrição do evento:");
+			String descricao = InputUtil.leTextoObrigatorio((
+					"Insira a Descrição do evento:"));
 
-      int capacidadeMaxima = Integer.parseInt(
-          JOptionPane.showInputDialog(
-              "Insira a capacidade máxima:"));
+			Integer capacidadeMaxima = InputUtil.leInteiroObrigatorio(
+					"Capacidade máxima:");
 
-      StatusEvento situacao =
-          (StatusEvento) JOptionPane.showInputDialog(
-              null,
-              "Insira a situação do evento:",
-              "Situação",
-              JOptionPane.QUESTION_MESSAGE,
-              null,
-              StatusEvento.values(),
-              StatusEvento.PLANEJADO);
+			if (capacidadeMaxima == null) {
+				return;
+			}
 
-      Cronograma cronograma = cadastraCronograma();
+			StatusEvento situacao = (StatusEvento) JOptionPane.showInputDialog(
 
-      Evento evento;
+					null,
+					"Insira a situação do evento:",
+					"Situação",
+					JOptionPane.QUESTION_MESSAGE,
+					null,
+					StatusEvento.values(),
+					StatusEvento.PLANEJADO);
 
-      if (tipo == 0) {
+			Cronograma cronograma = cadastraCronograma();
 
-        int tempo = Integer.parseInt(
-            JOptionPane.showInputDialog(
-                "Tempo da palestra (em minutos):"));
+			Evento evento;
 
-        Palestra palestra = new Palestra(
-            duracao,
-            descricao,
-            capacidadeMaxima,
-            situacao,
-            cronograma,
-            tempo);
+			// na dúvida sobre o tipo, vide tiposDeEvento
+			if (tipo == 0) {
 
-        cadastraPalestrantes(palestra);
+				Integer tempo = InputUtil.leInteiroObrigatorio(
+						"Tempo da palestra (em minutos):");
+				if (tempo == null) {
+					return;
+				}
 
-        evento = palestra;
+				Palestra palestra = new Palestra(
+						duracao,
+						descricao,
+						capacidadeMaxima,
+						situacao,
+						cronograma,
+						tempo);
 
-      } else {
+				cadastraPalestrantes(palestra);
 
-        List<String> materiais =
-            cadastraMateriais();
+				evento = palestra;
 
-        evento = new Oficina(
-            duracao,
-            descricao,
-            capacidadeMaxima,
-            situacao,
-            cronograma,
-            materiais);
-      }
+			} else {
 
-      EventoDAO dao = new EventoDAO();
-      dao.salva(evento);
+				List<String> materiais =
+						cadastraMateriais();
 
-      JOptionPane.showMessageDialog(
-          null,
-          "Evento cadastrado com sucesso!");
+				evento = new Oficina(
+						duracao,
+						descricao,
+						capacidadeMaxima,
+						situacao,
+						cronograma,
+						materiais);
+			}
 
-    } catch (NumberFormatException e) {
-      JOptionPane.showMessageDialog(
-          null,
-          "Valor numérico inválido.");
+			EventoDAO dao = new EventoDAO();
+			dao.salva(evento);
 
-    } catch (ParseException e) {
-      JOptionPane.showMessageDialog(
-          null,
-          "Data informada em formato inválido.");
+			JOptionPane.showMessageDialog(
+					null,
+					"Evento cadastrado com sucesso!");
 
-    } catch (PersistenceException e) {
-      JOptionPane.showMessageDialog(
-          null,
-          "Erro ao salvar os dados no banco.");
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(
+					null,
+					"Valor numérico inválido.");
 
-    } catch (Exception e) {
-      JOptionPane.showMessageDialog(
-          null,
-          "Um erro inesperado ocorreu.");
-    }
-  }
+		} catch (ParseException e) {
+			JOptionPane.showMessageDialog(
+					null,
+					"Data informada em formato inválido.");
 
-    private static Cronograma cadastraCronograma() {
-      return new Cronograma();
-    }
+		} catch (PersistenceException e) {
+			JOptionPane.showMessageDialog(
+					null,
+					"Erro ao salvar os dados no banco.");
 
-    private static void cadastraPalestrantes(Palestra palestra) {
-      int resposta;
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(
+					null,
+					"Um erro inesperado ocorreu.");
+		}
+	}
 
-      do {
+	private static Cronograma cadastraCronograma()
+			throws ParseException {
 
-        String nome = JOptionPane.showInputDialog(
-            "Insira o nome do palestrante:");
+		Date dataInicio = DataUtil.leData(
+				"Data de início do cronograma (dd/MM/yyyy):");
 
-        String especialidade =
-            JOptionPane.showInputDialog(
-                "Insira sua especialidade:");
+		Date dataFim = DataUtil.leData(
+				"Data de fim do cronograma (dd/MM/yyyy):");
 
-        palestra.adicionaPalestrante(
-            new Palestrante(
-                nome,
-                especialidade));
+		Cronograma cronograma = new Cronograma(dataInicio, dataFim);
 
-        resposta = JOptionPane.showConfirmDialog(
-            null,
-            "Adicionar outro palestrante?");
+		do {
+			Atividade atividade = cadastraAtividade();
 
-      } while (resposta == JOptionPane.YES_OPTION);
-    }
+			if (atividade == null) {
+				return cronograma;
+			}
 
-    private static List<String> cadastraMateriais() {
+			cronograma.adicionaAtividade(atividade);
 
-      List<String> materiais = new ArrayList<>();
+		} while (InputUtil.confirma("Adicionar outra atividade?"));
 
-      int resposta;
+		return cronograma;
+	}
 
-      do {
+	private static Atividade cadastraAtividade()
+			throws ParseException {
 
-        materiais.add(
-            JOptionPane.showInputDialog(
-                "Material necessário:"));
+		String nome = InputUtil.leTextoObrigatorio(
+				"Nome da atividade:");
 
-        resposta = JOptionPane.showConfirmDialog(
-            null,
-            "Adicionar outro material?");
+		if (nome == null) {
+			return null;
+		}
 
-      } while (resposta == JOptionPane.YES_OPTION);
+		Date dataHoraInicio = DataUtil.leDataHora(
+				"Data/hora de início da atividade (dd/MM/yyyy HH:mm):");
 
-      return materiais;
-    }
+		Date dataHoraFim = DataUtil.leDataHora(
+				"Data/hora de fim da atividade (dd/MM/yyyy HH:mm):");
 
-  public static void pesquisaEventoPorNome() {
-    try {
-      String nome = JOptionPane.showInputDialog(
-          "Pesquise um evento pelo nome (ou parte do nome):");
+		StatusAtividade situacao =
+				(StatusAtividade) JOptionPane.showInputDialog(
+						null,
+						"Situação da atividade:",
+						"Situação",
+						JOptionPane.QUESTION_MESSAGE,
+						null,
+						StatusAtividade.values(),
+						StatusAtividade.PLANEJADA);
 
-      if (nome == null || nome.trim().isEmpty()) {
-        return;
-      }
+		String responsavel = InputUtil.leTextoObrigatorio(
+				"Responsável pela atividade:");
 
-      EventoDAO dao = new EventoDAO();
+		if (responsavel == null) {
+			return null;
+		}
 
-      List<Evento> eventos = dao.buscaPorNome(nome.trim());
+		return new Atividade(
+				nome,
+				dataHoraInicio,
+				dataHoraFim,
+				situacao,
+				responsavel);
+	}
 
-      if (eventos.isEmpty()) {
-        JOptionPane.showMessageDialog(
-            null,
-            "Nenhum evento encontrado.");
+	private static void cadastraPalestrantes(Palestra palestra) {
+		do {
 
-        return;
-      }
+			String nome = InputUtil.leTextoObrigatorio(
+					"Insira o nome do palestrante:");
 
-      String resultado = """
-          Eventos encontrados:
-          
-          """;
+			if (nome == null) {
+				return;
+			}
 
-      for (Evento evento : eventos) {
+			String especialidade = InputUtil.leTextoObrigatorio(
+					"Insira sua especialidade:");
 
-        resultado += String.format("""
-                ID: %d
-                Descrição: %s
-                Situação: %s
-                
-                --------------------
-                
-                """,
-            evento.getId(),
-            evento.getDescricao(),
-            evento.getSituacao());
-      }
+			if (especialidade == null) {
+				return;
+			}
 
-      JOptionPane.showMessageDialog(
-          null,
-          resultado
-      );
-    } catch (PersistenceException e) {
-      JOptionPane.showMessageDialog(
-          null,
-          "Erro ao consultar os eventos.");
+			palestra.adicionaPalestrante(
+					new Palestrante(
+							nome,
+							especialidade));
 
-    } catch (Exception e) {
+		} while (InputUtil.confirma("Adicionar outro palestrante?"));
+	}
 
-      JOptionPane.showMessageDialog(
-          null,
-          "Ocorreu um erro inesperado.");
+	private static List<String> cadastraMateriais() {
 
-    }
-  }
+		List<String> materiais = new ArrayList<>();
+
+		do {
+
+			String material = InputUtil.leTextoObrigatorio(
+					"Material necessário:");
+
+			if (material == null) {
+				break;
+			}
+
+			materiais.add(material);
+
+		} while (InputUtil.confirma("Adicionar outro material?"));
+
+		return materiais;
+	}
+
+	public static void pesquisaEventoPorNome() {
+		try {
+			String nome = InputUtil.leTextoObrigatorio(
+					"Pesquise um evento pelo nome (ou parte do nome):");
+
+			if (nome == null) {
+				return;
+			}
+
+			List<Evento> eventos = EVENTO_DAO.buscaPorNome(nome.trim());
+
+			if (eventos.isEmpty()) {
+				JOptionPane.showMessageDialog(
+						null,
+						"Nenhum evento encontrado.");
+
+				return;
+			}
+
+			String resultado = """
+					Eventos encontrados:
+					
+					""";
+
+			for (Evento evento : eventos) {
+
+				resultado += String.format("""
+								ID: %d
+								Descrição: %s
+								Situação: %s
+								
+								--------------------
+								
+								""",
+						evento.getId(),
+						evento.getDescricao(),
+						evento.getSituacao());
+			}
+
+			JOptionPane.showMessageDialog(
+					null,
+					resultado
+			);
+		} catch (PersistenceException e) {
+			JOptionPane.showMessageDialog(
+					null,
+					"Erro ao consultar os eventos.");
+
+		} catch (Exception e) {
+
+			JOptionPane.showMessageDialog(
+					null,
+					"Ocorreu um erro inesperado.");
+
+		}
+	}
+
+	public static void exibeEventoCompleto() {
+		List<Evento> eventos = EVENTO_DAO.listaTodos();
+
+		if (eventos.isEmpty()) {
+			JOptionPane.showMessageDialog(
+					null,
+					"Nenhum evento cadastrado.");
+
+			return;
+		}
+
+		Evento eventoSelecionado = (Evento) JOptionPane.showInputDialog(
+				null,
+				"Selecione um evento:",
+				"Eventos",
+				JOptionPane.QUESTION_MESSAGE,
+				null,
+				eventos.toArray(),
+				eventos.get(0));
+
+		if (eventoSelecionado == null) {
+			return;
+		}
+
+		Evento eventoCompleto = EVENTO_DAO.buscaEventoCompletoPorId(
+				eventoSelecionado.getId());
+
+		exibeTextoComScroll(
+				"Detalhes do evento",
+				formataEventoCompleto(eventoCompleto));
+	}
+
+	private static String formataEventoCompleto(Evento evento) {
+		String texto = String.format("""
+						ID: %d
+						Tipo: %s
+						Descrição: %s
+						Data: %s
+						Capacidade máxima: %d
+						Situação: %s
+						
+						""",
+				evento.getId(),
+				evento.getClass().getSimpleName(),
+				evento.getDescricao(),
+				DataUtil.formataData(evento.getDuracao()),
+				evento.getCapacidadeMaxima(),
+				evento.getSituacao());
+
+		texto += formataCronograma(evento.getCronograma());
+
+		if (evento instanceof Oficina oficina) {
+			texto += formataOficina(oficina);
+		}
+
+		if (evento instanceof Palestra palestra) {
+			texto += formatarPalestra(palestra);
+		}
+
+		return texto;
+	}
+
+	private static String formataCronograma(Cronograma cronograma) {
+		if (cronograma == null) {
+			return "Cronograma: não cadastrado.\n";
+		}
+
+		String texto = String.format("""
+						Cronograma:
+						Início: %s
+						Fim: %s
+						
+						Atividades:
+						""",
+				cronograma.getDataInicio(),
+				cronograma.getDataFim());
+
+		if (cronograma.getAtividades().isEmpty()) {
+			return texto + "Nenhuma atividade cadastrada.\n";
+		}
+
+		for (Atividade atividade : cronograma.getAtividades()) {
+			texto += String.format("""
+								- %s
+									Início: %s
+									Fim: %s
+									Situação: %s
+									Responsável: %s
+								
+								""",
+					atividade.getNome(),
+					atividade.getDataHoraInicio(),
+					atividade.getDataHoraFim(),
+					atividade.getSituacao(),
+					atividade.getResponsavel());
+		}
+
+		return texto;
+	}
+
+	private static String formataOficina(Oficina oficina) {
+		String texto = "\nMateriais:\n";
+
+		if (oficina.getMateriais().isEmpty()) {
+			return texto + "Nenhum material cadastrado.\n";
+		}
+
+		for (String material : oficina.getMateriais()) {
+			texto += "- " + material + "\n";
+		}
+
+		return texto;
+	}
+
+	private static String formatarPalestra(Palestra palestra) {
+		String texto = String.format("""
+						
+						Tempo: %d minutos
+						
+						Palestrantes:
+						""",
+				palestra.getTempo());
+
+		if (palestra.getPalestrantes().isEmpty()) {
+			return texto + "Nenhum palestrante cadastrado.\n";
+		}
+
+		for (Palestrante palestrante : palestra.getPalestrantes()) {
+			texto += String.format("""
+								- %s (%s)
+								""",
+					palestrante.getNome(),
+					palestrante.getEspecialidade());
+		}
+
+		return texto;
+	}
+
+	private static void exibeTextoComScroll(
+			String titulo,
+			String texto) {
+
+		JTextArea areaTexto =
+				new JTextArea(texto);
+
+		areaTexto.setEditable(false);
+		areaTexto.setLineWrap(true);
+		areaTexto.setWrapStyleWord(true);
+
+		JScrollPane scrollPane =
+				new JScrollPane(areaTexto);
+
+		scrollPane.setPreferredSize(
+				new Dimension(700, 450));
+
+		JOptionPane.showMessageDialog(
+				null,
+				scrollPane,
+				titulo,
+				JOptionPane.INFORMATION_MESSAGE);
+	}
 }

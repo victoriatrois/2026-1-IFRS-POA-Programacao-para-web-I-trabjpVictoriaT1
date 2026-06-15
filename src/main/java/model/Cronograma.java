@@ -33,4 +33,16 @@ public class Cronograma {
   public void adicionaAtividade(Atividade atividade) {
     this.atividades.add(atividade);
   }
+
+  public Date getDataInicio() {
+    return dataInicio;
+  }
+
+  public Date getDataFim() {
+    return dataFim;
+  }
+
+  public List<Atividade> getAtividades() {
+    return atividades;
+  }
 }

@@ -83,12 +83,12 @@ public class Evento {
         return situacao;
     }
 
+    public Cronograma getCronograma() {
+        return cronograma;
+    }
+
     @Override
     public String toString() {
-        return String.format("""
-            Evento:
-            ID: %d
-            Descricao: %s
-            """, id, descricao);
+        return String.format("%d - %s", id, descricao);
     }
 }
