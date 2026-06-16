@@ -66,7 +66,32 @@ WHERE
 
 ## US4 - Listar Inscrições e Participantes
 ```sql
+SELECT * FROM PARTICIPANTE;
 
+SELECT * FROM INSCRICAO;
+
+SELECT
+  inscricao.id,
+  inscricao.data,
+  inscricao.status,
+
+  participante.nome,
+  participante.email,
+
+  evento.descricao
+FROM
+  Inscricao inscricao
+    INNER JOIN Participante participante
+      ON participante.id =
+        inscricao.participante_id
+
+      INNER JOIN Evento evento
+       ON evento.id =
+          inscricao.evento_id
+WHERE
+  evento.id = 1
+ORDER BY
+  inscricao.id;
 ```
 
 ## US5 - Listar Cronograma e Atividades
