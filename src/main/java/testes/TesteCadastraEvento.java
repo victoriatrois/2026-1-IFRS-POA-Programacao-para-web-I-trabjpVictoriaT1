@@ -11,7 +11,7 @@ import model.StatusEvento;
 import java.util.Calendar;
 import java.util.Date;
 
-public class TesteCadastrarEvento {
+public class TesteCadastraEvento {
 
     public static void main(String[] args) {
         Cronograma cronograma = new Cronograma();

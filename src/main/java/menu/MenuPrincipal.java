@@ -1,5 +1,6 @@
 package menu;
 
+import util.CargaInicialUtil;
 import util.InputUtil;
 
 import javax.swing.JOptionPane;
@@ -16,7 +17,8 @@ public class MenuPrincipal {
                 1 - Cadastrar Evento
                 2 - Listar o evento e todos os itens vinculados a ele
                 3 - Pesquisar um Evento por Nome
-                4 - Listar um cronograma e todas suas atividades
+                4 - Listar inscrições e participantes
+                5 - Listar um cronograma e todas suas atividades
                 0 - Sair
                 """);
 
@@ -40,6 +42,10 @@ public class MenuPrincipal {
           break;
 
         case "4":
+          MenuInscricao.exibeInscricoesPorEvento();
+          break;
+
+        case "5":
           MenuCronograma.listaCronogramaEAtividades();
           break;
 
