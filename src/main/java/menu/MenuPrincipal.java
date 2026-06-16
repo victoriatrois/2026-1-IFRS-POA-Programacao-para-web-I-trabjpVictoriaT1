@@ -16,6 +16,7 @@ public class MenuPrincipal {
                 1 - Cadastrar Evento
                 2 - Listar o evento e todos os itens vinculados a ele
                 3 - Pesquisar um Evento por Nome
+                4 - Listar um cronograma e todas suas atividades
                 0 - Sair
                 """);
 
@@ -36,6 +37,10 @@ public class MenuPrincipal {
 
         case "3":
           MenuEvento.pesquisaEventoPorNome();
+          break;
+
+        case "4":
+          MenuCronograma.listaCronogramaEAtividades();
           break;
 
         case "0":
