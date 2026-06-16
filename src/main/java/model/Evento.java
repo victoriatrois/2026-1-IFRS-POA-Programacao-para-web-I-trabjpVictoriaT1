@@ -87,6 +87,10 @@ public class Evento {
         return cronograma;
     }
 
+    public void substituiCronograma(Cronograma cronograma) {
+        this.cronograma = cronograma;
+    }
+
     @Override
     public String toString() {
         return String.format("%d - %s", id, descricao);

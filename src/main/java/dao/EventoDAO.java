@@ -71,4 +71,21 @@ public class EventoDAO {
       return evento;
     }
   }
+
+  public void atualiza(Evento evento) {
+    try (EntityManager em = JPAUtil.getEntityManager()) {
+      em.getTransaction().begin();
+      em.merge(evento);
+      em.getTransaction().commit();
+    }
+  }
+
+  public void remove(Evento evento) {
+    try (EntityManager em = JPAUtil.getEntityManager()) {
+      em.getTransaction().begin();
+      Evento eventoGerenciado = em.merge(evento);
+      em.remove(eventoGerenciado);
+      em.getTransaction().commit();
+    }
+  }
 }
