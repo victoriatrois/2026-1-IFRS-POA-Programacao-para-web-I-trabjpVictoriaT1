@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static util.ExibicaoUtil.exibeTextoComScroll;
+import static util.FormatadorDeEventoUtil.formataEventoCompleto;
+
 public class MenuEvento {
 	private static final EventoDAO EVENTO_DAO =
 			new EventoDAO();
@@ -333,135 +336,5 @@ public class MenuEvento {
 		exibeTextoComScroll(
 				"Detalhes do evento",
 				formataEventoCompleto(eventoCompleto));
-	}
-
-	private static String formataEventoCompleto(Evento evento) {
-		String texto = String.format("""
-						ID: %d
-						Tipo: %s
-						Descrição: %s
-						Data: %s
-						Capacidade máxima: %d
-						Situação: %s
-						
-						""",
-				evento.getId(),
-				evento.getClass().getSimpleName(),
-				evento.getDescricao(),
-				DataUtil.formataData(evento.getDuracao()),
-				evento.getCapacidadeMaxima(),
-				evento.getSituacao());
-
-		texto += formataCronograma(evento.getCronograma());
-
-		if (evento instanceof Oficina oficina) {
-			texto += formataOficina(oficina);
-		}
-
-		if (evento instanceof Palestra palestra) {
-			texto += formatarPalestra(palestra);
-		}
-
-		return texto;
-	}
-
-	private static String formataCronograma(Cronograma cronograma) {
-		if (cronograma == null) {
-			return "Cronograma: não cadastrado.\n";
-		}
-
-		String texto = String.format("""
-						Cronograma:
-						Início: %s
-						Fim: %s
-						
-						Atividades:
-						""",
-				cronograma.getDataInicio(),
-				cronograma.getDataFim());
-
-		if (cronograma.getAtividades().isEmpty()) {
-			return texto + "Nenhuma atividade cadastrada.\n";
-		}
-
-		for (Atividade atividade : cronograma.getAtividades()) {
-			texto += String.format("""
-								- %s
-									Início: %s
-									Fim: %s
-									Situação: %s
-									Responsável: %s
-								
-								""",
-					atividade.getNome(),
-					atividade.getDataHoraInicio(),
-					atividade.getDataHoraFim(),
-					atividade.getSituacao(),
-					atividade.getResponsavel());
-		}
-
-		return texto;
-	}
-
-	private static String formataOficina(Oficina oficina) {
-		String texto = "\nMateriais:\n";
-
-		if (oficina.getMateriais().isEmpty()) {
-			return texto + "Nenhum material cadastrado.\n";
-		}
-
-		for (String material : oficina.getMateriais()) {
-			texto += "- " + material + "\n";
-		}
-
-		return texto;
-	}
-
-	private static String formatarPalestra(Palestra palestra) {
-		String texto = String.format("""
-						
-						Tempo: %d minutos
-						
-						Palestrantes:
-						""",
-				palestra.getTempo());
-
-		if (palestra.getPalestrantes().isEmpty()) {
-			return texto + "Nenhum palestrante cadastrado.\n";
-		}
-
-		for (Palestrante palestrante : palestra.getPalestrantes()) {
-			texto += String.format("""
-								- %s (%s)
-								""",
-					palestrante.getNome(),
-					palestrante.getEspecialidade());
-		}
-
-		return texto;
-	}
-
-	private static void exibeTextoComScroll(
-			String titulo,
-			String texto) {
-
-		JTextArea areaTexto =
-				new JTextArea(texto);
-
-		areaTexto.setEditable(false);
-		areaTexto.setLineWrap(true);
-		areaTexto.setWrapStyleWord(true);
-
-		JScrollPane scrollPane =
-				new JScrollPane(areaTexto);
-
-		scrollPane.setPreferredSize(
-				new Dimension(700, 450));
-
-		JOptionPane.showMessageDialog(
-				null,
-				scrollPane,
-				titulo,
-				JOptionPane.INFORMATION_MESSAGE);
 	}
 }
