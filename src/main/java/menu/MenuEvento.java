@@ -4,13 +4,11 @@ import dao.EventoDAO;
 
 import jakarta.persistence.PersistenceException;
 
-import model.Atividade;
 import model.Cronograma;
 import model.Evento;
 import model.Oficina;
 import model.Palestra;
 import model.Palestrante;
-import model.StatusAtividade;
 import model.StatusEvento;
 
 import util.DataUtil;
@@ -26,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static menu.MenuCronograma.cadastraCronograma;
 import static util.ExibicaoUtil.exibeTextoComScroll;
 import static util.FormatadorDeEventoUtil.formataEventoCompleto;
 
@@ -136,72 +135,6 @@ public class MenuEvento {
 					null,
 					"Um erro inesperado ocorreu.");
 		}
-	}
-
-	private static Cronograma cadastraCronograma()
-			throws ParseException {
-
-		Date dataInicio = DataUtil.leData(
-				"Data de início do cronograma (dd/MM/yyyy):");
-
-		Date dataFim = DataUtil.leData(
-				"Data de fim do cronograma (dd/MM/yyyy):");
-
-		Cronograma cronograma = new Cronograma(dataInicio, dataFim);
-
-		do {
-			Atividade atividade = cadastraAtividade();
-
-			if (atividade == null) {
-				return cronograma;
-			}
-
-			cronograma.adicionaAtividade(atividade);
-
-		} while (InputUtil.confirma("Adicionar outra atividade?"));
-
-		return cronograma;
-	}
-
-	private static Atividade cadastraAtividade()
-			throws ParseException {
-
-		String nome = InputUtil.leTextoObrigatorio(
-				"Nome da atividade:");
-
-		if (nome == null) {
-			return null;
-		}
-
-		Date dataHoraInicio = DataUtil.leDataHora(
-				"Data/hora de início da atividade (dd/MM/yyyy HH:mm):");
-
-		Date dataHoraFim = DataUtil.leDataHora(
-				"Data/hora de fim da atividade (dd/MM/yyyy HH:mm):");
-
-		StatusAtividade situacao =
-				(StatusAtividade) JOptionPane.showInputDialog(
-						null,
-						"Situação da atividade:",
-						"Situação",
-						JOptionPane.QUESTION_MESSAGE,
-						null,
-						StatusAtividade.values(),
-						StatusAtividade.PLANEJADA);
-
-		String responsavel = InputUtil.leTextoObrigatorio(
-				"Responsável pela atividade:");
-
-		if (responsavel == null) {
-			return null;
-		}
-
-		return new Atividade(
-				nome,
-				dataHoraInicio,
-				dataHoraFim,
-				situacao,
-				responsavel);
 	}
 
 	private static void cadastraPalestrantes(Palestra palestra) {

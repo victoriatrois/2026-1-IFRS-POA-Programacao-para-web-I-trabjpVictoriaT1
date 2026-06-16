@@ -4,12 +4,15 @@ import util.CargaInicialUtil;
 import util.InputUtil;
 
 import javax.swing.JOptionPane;
+import java.text.ParseException;
 
 public class MenuPrincipal {
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws ParseException {
 
     boolean executando = true;
+
+    CargaInicialUtil.executaSeBancoEstiverVazio();
 
     while (executando) {
 
@@ -19,6 +22,7 @@ public class MenuPrincipal {
                 3 - Pesquisar um Evento por Nome
                 4 - Listar inscrições e participantes
                 5 - Listar um cronograma e todas suas atividades
+                6 - Excluir cronograma
                 0 - Sair
                 """);
 
@@ -47,6 +51,10 @@ public class MenuPrincipal {
 
         case "5":
           MenuCronograma.listaCronogramaEAtividades();
+          break;
+
+        case "6":
+          MenuCronograma.excluiCronograma();
           break;
 
         case "0":
